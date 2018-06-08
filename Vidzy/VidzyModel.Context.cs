@@ -30,7 +30,7 @@ namespace Vidzy
         public virtual DbSet<Genre> Genres { get; set; }
         public virtual DbSet<Video> Videos { get; set; }
     
-        public virtual int AddVideo(string name, Nullable<System.DateTime> releaseDate, Nullable<byte> genreId)
+        public virtual int AddVideo(string name, Nullable<System.DateTime> releaseDate, Nullable<byte> genreId, Nullable<byte> classification)
         {
             var nameParameter = name != null ?
                 new ObjectParameter("Name", name) :
@@ -44,7 +44,11 @@ namespace Vidzy
                 new ObjectParameter("GenreId", genreId) :
                 new ObjectParameter("GenreId", typeof(byte));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AddVideo", nameParameter, releaseDateParameter, genreIdParameter);
+            var classificationParameter = classification.HasValue ?
+                new ObjectParameter("Classification", classification) :
+                new ObjectParameter("Classification", typeof(byte));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("AddVideo", nameParameter, releaseDateParameter, genreIdParameter, classificationParameter);
         }
     }
 }
